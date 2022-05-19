@@ -1,4 +1,13 @@
 from fastapi import FastAPI
+#from nntplib import GroupInfo
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BOARD)
+
+salida1=19
+salida2=21
+
+GPIO.setup(salida1, GPIO.OUT)
+GPIO.setup(salida2,GPIO.OUT)
 
 app = FastAPI()
 
@@ -7,18 +16,28 @@ arriba = False;
 
 @app.get("/up")
 async def up():
-    arriba = False;
-    bloqueado = False;
-    return {"message": "Estoy subiendo, bloqueado: " + str(bloqueado)}
+    
+    GPIO.output(salida1,1)
+    GPIO.output(salida2,0)
+    return {"salida1: " + GPIO.input(salida1)+ "salida2: " + GPIO.input(salida2)}
 
 @app.get("/down")
 async def down():
-    bloqueado = False;
-    return {"message": "Estoy bajando, bloqueado: " + str(bloqueado)}
+    GPIO.output(salida1,0)
+    GPIO.output(salida2,1)
+    return {"salida1: " + GPIO.input(salida1)+ "salida2: " + GPIO.input(salida2)}
 
 @app.get("/stop")
 async def stop():
-    bloqueado = True;
-    return {"message": "bloqueado: " + str(bloqueado)}
+    GPIO.output(salida1,1)
+    GPIO.output(salida2,1)
+    return {"salida1: " + GPIO.input(salida1)+ "salida2: " + GPIO.input(salida2)}
+
+
+@app.get("/auto")
+async def auto():
+    GPIO.output(salida1,0)
+    GPIO.output(salida2,0)
+    return {"salida1: " + GPIO.input(salida1)+ "salida2: " + GPIO.input(salida2)}
 
 
